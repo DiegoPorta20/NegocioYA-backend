@@ -12,7 +12,7 @@ export default registerAs(
     database: process.env.DB_DATABASE || 'negocioya_db',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: process.env.NODE_ENV === 'development', // Solo en desarrollo
-    logging: process.env.NODE_ENV === 'development',
+    logging: ['error', 'warn'], // Solo mostrar errores y advertencias, no queries
     timezone: 'Z',
     charset: 'utf8mb4',
   }),

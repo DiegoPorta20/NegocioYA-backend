@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import { AuthModule } from './auth/auth.module';
+import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { ClientsModule } from './clients/clients.module';
@@ -30,6 +31,7 @@ import { CompaniesModule } from './companies/companies.module';
       inject: [ConfigService],
     }),
     AuthModule,
+    RolesModule,
     CompaniesModule,
     UsersModule,
     ProductsModule,

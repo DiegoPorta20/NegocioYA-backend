@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { CompaniesModule } from '../companies/companies.module';
+import { RolesModule } from '../roles/roles.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from '../users/entities/user.entity';
 import jwtConfig from '../config/jwt.config';
@@ -16,6 +17,7 @@ import jwtConfig from '../config/jwt.config';
     TypeOrmModule.forFeature([User]),
     UsersModule,
     CompaniesModule,
+    RolesModule,
     PassportModule,
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync({

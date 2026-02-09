@@ -56,6 +56,7 @@ export class SalesService {
 
     // Generar número de venta
     const lastSale = await this.salesRepository.findOne({
+      where: { companyId },
       order: { createdAt: 'DESC' },
     });
 

@@ -11,12 +11,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { Sale } from '../../sales/entities/sale.entity';
 import { Company } from '../../companies/entities/company.entity';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  MANAGER = 'manager',
-  CASHIER = 'cashier',
-}
+import { Role } from '../../roles/entities/role.entity';
 
 @Entity('users')
 export class User {
@@ -33,12 +28,12 @@ export class User {
   @Column()
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-    default: UserRole.CASHIER,
-  })
-  role: UserRole;
+  @ManyToOne(() => Role, (role) => role.users, { eager: true })
+  @JoinColumn({ name: 'roleId' })
+  role: Role;
+
+  @Column()
+  roleId: string;
 
   @Column({ default: true })
   isActive: boolean;

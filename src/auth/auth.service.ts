@@ -3,9 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { CompaniesService } from '../companies/companies.service';
+import { RolesService } from '../roles/roles.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterCompanyDto } from './dto/register-company.dto';
-import { User, UserRole } from '../users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private companiesService: CompaniesService,
+    private rolesService: RolesService,
     private jwtService: JwtService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
@@ -46,10 +48,12 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
+    const roleName = user.role?.name || 'CASHIER';
+
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: roleName,
       companyId: user.companyId,
     };
 
@@ -59,7 +63,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
-        role: user.role,
+        role: roleName,
         companyId: user.companyId,
       },
     };
@@ -100,6 +104,12 @@ export class AuthService {
       industry: registerDto.industry,
     });
 
+    // Buscar el rol ADMIN
+    const adminRole = await this.rolesService.findByName('ADMIN');
+    if (!adminRole) {
+      throw new Error('Rol ADMIN no encontrado. Ejecute el seed de roles.');
+    }
+
     // Hashear contraseña
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
@@ -108,7 +118,7 @@ export class AuthService {
       email: registerDto.userEmail,
       password: hashedPassword,
       fullName: registerDto.fullName,
-      role: UserRole.ADMIN,
+      roleId: adminRole.id,
       companyId: company.id,
       isActive: true,
     });
@@ -119,7 +129,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: 'ADMIN',
       companyId: user.companyId,
     };
 
@@ -135,7 +145,7 @@ export class AuthService {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
-        role: user.role,
+        role: 'ADMIN',
         companyId: user.companyId,
       },
     };

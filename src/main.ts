@@ -12,16 +12,18 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
 
-  // Configuración de CORS
+  // Configuración de CORS - Permitir todos los orígenes en desarrollo
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN') || '*',
+    origin: true, // Permite cualquier origen
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    exposedHeaders: ['Authorization'],
   });
 
   // Prefijo global de API
   const apiPrefix = configService.get('API_PREFIX') || 'api';
-  const apiVersion = configService.get('API_VERSION') || 'v1';
-  app.setGlobalPrefix(`${apiPrefix}/${apiVersion}`);
+  app.setGlobalPrefix(apiPrefix);
 
   // Validación global
   app.useGlobalPipes(
@@ -69,10 +71,6 @@ async function bootstrap() {
 
   const port = configService.get('PORT') || 3000;
   await app.listen(port);
-
-  logger.log(`🚀 Aplicación iniciada en: http://localhost:${port}`);
-  logger.log(`📚 Documentación disponible en: http://localhost:${port}/api/docs`);
-  logger.log(`🎨 Identidad: Azul #10375C | Turquesa #2AB7B7`);
 }
 
 bootstrap();

@@ -16,7 +16,6 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '../users/entities/user.entity';
 
 @ApiTags('Empresas')
 @Controller('companies')
@@ -26,14 +25,14 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  @Roles(UserRole.ADMIN) // Solo super admin puede crear empresas
+  @Roles('ADMIN') // Solo super admin puede crear empresas
   @ApiOperation({ summary: 'Crear nueva empresa' })
   create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companiesService.create(createCompanyDto);
   }
 
   @Get()
-  @Roles(UserRole.ADMIN) // Solo super admin ve todas las empresas
+  @Roles('ADMIN') // Solo super admin ve todas las empresas
   @ApiOperation({ summary: 'Obtener todas las empresas' })
   findAll() {
     return this.companiesService.findAll();
@@ -64,7 +63,7 @@ export class CompaniesController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Eliminar una empresa (desactivar)' })
   remove(@Param('id') id: string) {
     return this.companiesService.remove(id);

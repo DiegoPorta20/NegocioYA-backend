@@ -6,7 +6,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { DashboardService, DashboardStats, SalesReport } from './dashboard.service';
+import { DashboardService, DashboardStats, SalesReport, MonthlyRevenueChart, WeeklySalesChart } from './dashboard.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Dashboard')
@@ -36,5 +36,24 @@ export class DashboardController {
       new Date(startDate),
       new Date(endDate),
     );
+  }
+
+  @Get('charts/monthly-revenue')
+  @ApiOperation({ summary: 'Obtener datos del gráfico de ingresos y ganancias mensuales' })
+  @ApiQuery({ name: 'months', required: false, description: 'Número de meses a mostrar (default: 6)' })
+  getMonthlyRevenueChart(
+    @Request() req,
+    @Query('months') months?: number,
+  ): Promise<MonthlyRevenueChart> {
+    return this.dashboardService.getMonthlyRevenueChart(
+      req.user.companyId,
+      months ? Number(months) : 6,
+    );
+  }
+
+  @Get('charts/weekly-sales')
+  @ApiOperation({ summary: 'Obtener datos del gráfico de ventas de la semana actual' })
+  getWeeklySalesChart(@Request() req): Promise<WeeklySalesChart> {
+    return this.dashboardService.getWeeklySalesChart(req.user.companyId);
   }
 }
